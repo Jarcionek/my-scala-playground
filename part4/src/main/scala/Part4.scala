@@ -13,39 +13,24 @@ object Part4 extends App {
     }
 
     case class Addition(a: Calculation, b: Calculation) extends Calculation {
-        def calculate: Result = {
-            a.calculate match {
-                case Finite(x) => b.calculate match {
-                    case Finite(y) => Finite(x + y)
-                    case Undefined => Undefined
-                }
-                case Undefined => Undefined
-            }
+        def calculate: Result = (a.calculate, b.calculate) match {
+            case (Finite(x), Finite(y)) => Finite(x + y)
+            case _ => Undefined
         }
     }
 
     case class Multiplication(a: Calculation, b: Calculation) extends Calculation {
-        def calculate: Result = {
-            a.calculate match {
-                case Finite(x) => b.calculate match {
-                    case Finite(y) => Finite(x * y)
-                    case Undefined => Undefined
-                }
-                case Undefined => Undefined
-            }
+        def calculate: Result = (a.calculate, b.calculate) match {
+            case (Finite(x), Finite(y)) => Finite(x * y)
+            case _ => Undefined
         }
     }
 
     case class Division(a: Calculation, b: Calculation) extends Calculation {
-        def calculate: Result = {
-            a.calculate match {
-                case Finite(x) => b.calculate match {
-                    case Finite(0) => Undefined
-                    case Finite(y) => Finite(x / y)
-                    case Undefined => Undefined
-                }
-                case Undefined => Undefined
-            }
+        def calculate: Result = (a.calculate, b.calculate) match {
+            case (_, Finite(0)) => Undefined
+            case (Finite(x), Finite(y)) => Finite(x / y)
+            case _ => Undefined
         }
     }
 
