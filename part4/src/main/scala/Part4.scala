@@ -4,41 +4,49 @@ object Part4 extends App {
     case class Finite(value: Int) extends Result
     case object Undefined extends Result
 
-    
     trait Calculation {
-        def a: Calculation
-        def b: Calculation
+        def calculate: Result
+    }
 
+    case class Number(value: Int) extends Calculation {
+        val calculate = Finite(value)
+    }
+
+    case class Addition(a: Calculation, b: Calculation) extends Calculation {
         def calculate: Result = {
             a.calculate match {
                 case Finite(x) => b.calculate match {
-                    case Finite(y) => op(x, y)
+                    case Finite(y) => Finite(x + y)
                     case Undefined => Undefined
                 }
                 case Undefined => Undefined
             }
         }
-
-        protected def op(x: Int, y: Int): Result
-    }
-
-    case class Number(value: Int) extends Calculation {
-        val a = null
-        val b = null
-        override val calculate = Finite(value)
-        def op(x: Int, y: Int) = null
-    }
-
-    case class Addition(a: Calculation, b: Calculation) extends Calculation {
-        def op(x: Int, y: Int) = Finite(x + y)
     }
 
     case class Multiplication(a: Calculation, b: Calculation) extends Calculation {
-        def op(x: Int, y: Int) = Finite(x * y)
+        def calculate: Result = {
+            a.calculate match {
+                case Finite(x) => b.calculate match {
+                    case Finite(y) => Finite(x * y)
+                    case Undefined => Undefined
+                }
+                case Undefined => Undefined
+            }
+        }
     }
 
     case class Division(a: Calculation, b: Calculation) extends Calculation {
-        def op(x: Int, y: Int) = if (y == 0) Undefined else Finite(x / y)
+        def calculate: Result = {
+            a.calculate match {
+                case Finite(x) => b.calculate match {
+                    case Finite(0) => Undefined
+                    case Finite(y) => Finite(x / y)
+                    case Undefined => Undefined
+                }
+                case Undefined => Undefined
+            }
+        }
     }
 
 
